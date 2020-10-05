@@ -4,6 +4,8 @@
 Melrose Labs Command Line Interface for voice, messaging, video and identity APIs
 
 # Install
+Use <code>npm</code> to install the package. If you don't have Node.js, then you can install it from [https://nodejs.org/en/download/](https://nodejs.org/en/download/).
+
 ```bash
 npm i melroselabs-cli
 ```
