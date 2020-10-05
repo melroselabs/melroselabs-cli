@@ -1,13 +1,18 @@
 {
   "name": "melroselabs-cli",
-  "version": "1.0.1",
-  "description": "Melrose Labs CLI for voice, messaging, video and identity APIs",
+  "version": "1.0.4",
+  "description": "Melrose Labs Command Line Interface for voice, messaging, video and identity APIs",
   "main": "mlcli.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/melroselabs/melroselabs-cli.git"
+  },
   "keywords": [
     "cpaas",
+    "cli",
     "sms",
     "voice",
     "text",
@@ -16,8 +21,12 @@
     "identity",
     "otp"
   ],
+  "bin": {
+    "melroselabs-cli": "./mlcli.js"
+  },
   "author": "Melrose Labs",
   "license": "MIT",
+  "homepage": "https://github.com/melroselabs/melroselabs-cli",
   "dependencies": {
     "fs": "0.0.1-security",
     "ini": "^1.3.5",
