@@ -1,10 +1,10 @@
 #!/usr/bin/env node
 "use strict";
 
-const https = require("https");
 const fs = require("fs");
 const ini = require("ini");
 const request = require('request');
+//const https = require('https');
 
 class Config {
   constructor() {
@@ -186,7 +186,7 @@ if (process.argv[2] == "update") { // update (download) API definitions
 
 // api help
 
-if ((process.argv.length==4)&&(process.argv[3] == "help")) {
+if (((process.argv.length==4)&&(process.argv[3] == "help"))||(process.argv.length==3)) {
 
 	// API name (e.g. "identity", "voice")
 	var api_name = process.argv[2]
@@ -218,8 +218,7 @@ if ((process.argv.length==4)&&(process.argv[3] == "help")) {
 	return;
 }
 
-
-if ((process.argv.length==5)&&(process.argv[4] == "help")) {
+if (((process.argv.length==5)&&(process.argv[4] == "help"))||(process.argv.length===4)) {
 
 	// API name (e.g. "identity", "voice")
 	var api_name = process.argv[2]
@@ -234,18 +233,17 @@ if ((process.argv.length==5)&&(process.argv[4] == "help")) {
 	var schema = JSON.parse(textschema)
 	//console.log(schema["paths"])
 
-var api_path = "/"+process.argv[3]
-//console.log(api_path)
-if (schema["paths"][api_path] == null) {
-	console.log("Unknown path: "+process.argv[3]);
-	return;
-}
-
-
-	console.log("Usage: melroselabs-cli "+api_name+" "+process.argv[3]+" <parameters>\n");
+	var api_path = "/"+process.argv[3]
+	//console.log(api_path)
+	if (schema["paths"][api_path] == null) {
+		console.log("Unknown path: "+process.argv[3]);
+		return;
+	}
+	
+	console.log("Usage: melroselabs-cli "+api_name+" "+process.argv[3]+" create <parameters>\n");
 	
 	console.log("Where <parameters> are:");
-
+	
 	var api_method = "post";
 		
 	var rest_api_param_definition_name = schema["paths"][api_path][api_method]["parameters"][0]["name"];
