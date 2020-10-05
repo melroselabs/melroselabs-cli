@@ -1,5 +1,5 @@
-# melroselabs-cli
-Melrose Labs CLI for voice, messaging, video and identity APIs
+# Melrose Labs CLI
+Melrose Labs Command Line Interface for voice, messaging, video and identity APIs
 
 # Install
 ```bash
@@ -7,6 +7,8 @@ npm i melroselabs-cli
 ```
 
 # Use
+
+Get API key from [_Melrose Labs Developers section_](https://melroselabs.com/developers/)
 
 Set-up your API key from melroselabs.com:
 ```bash
