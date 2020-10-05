@@ -1,3 +1,5 @@
+<img src="https://melroselabs.com/assets/images/MelroseLabsLogo202007.svg" height="48px" alt="Melrose Labs" />
+
 # Melrose Labs CLI
 Melrose Labs Command Line Interface for voice, messaging, video and identity APIs
 
