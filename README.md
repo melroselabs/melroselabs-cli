@@ -72,7 +72,7 @@ File saved to out.mp3
 Find Iridium satellites currently serving location
 
 ```bash
-$ melroselabs-cli iridium satellites/visible/{location} retrieve 55.598,-2.731
+$ melroselabs-cli iridium satellites/visible/{location} retrieve location:55.598,-2.731
 {"satellites": [{"name": "IRIDIUM 103", "signal": 0.123}, {"name": "IRIDIUM 166", "signal": 0.545}]}
 ```
 
