@@ -99,6 +99,7 @@ function requestGET(api_name,api_path,params) {
 
 function requestPOST(api_name,api_path,params) {
 
+	//console.log(params);
 	//console.log(JSON.stringify(params))
 	
 	var options = {
@@ -192,7 +193,7 @@ async function helpHighLevel() {
 	console.log("\nFor list of services for an API, type:\n\n melroselabs-cli <api> help\n");
 }
 
-function displayUsage(api_method,rest_name) {
+function displayUsageOld(api_method,rest_name) {
 
 	if (rest_api_param_definition_name = schema["paths"][api_path][api_method]!=null)
 	{
@@ -472,7 +473,8 @@ if (schema["paths"][api_path][api_method] == null) {
 	return;
 }
 
-var rest_api_param_definition_required = []; //empty array of required parameters
+var json_params = []; // parameters that are json objects
+var rest_api_param_definition_required = []; // empty array of required parameters
 
 if (schema["paths"][api_path][api_method]["parameters"]!=null) {
 	var rest_api_param_definition_name = null;
@@ -491,6 +493,20 @@ if (schema["paths"][api_path][api_method]["parameters"]!=null) {
 			if (rest_api_param_definition) {
 				if (rest_api_param_definition["required"] != null) rest_api_param_definition_required = rest_api_param_definition_required.concat( rest_api_param_definition["required"] );
 			}
+			
+
+
+
+			if (rest_api_param_definition["properties"]) {
+				for (const [key, value] of Object.entries(rest_api_param_definition["properties"])) {
+				
+					if (value["type"]=="object") json_params.push(key);
+					if (value["type"]=="array") json_params.push(key);
+
+				}
+				
+			}
+
 		
 		}
 		else if (schema["paths"][api_path][api_method]["parameters"][i]["required"] === true) {
@@ -498,6 +514,9 @@ if (schema["paths"][api_path][api_method]["parameters"]!=null) {
 		}
 	
 	}
+	
+	//console.log("JSON params");
+	//console.log(json_params);
 }
 
 //console.log("Required parameters:");
@@ -519,7 +538,11 @@ for(let i=5;i<process.argv.length;i++)
 		
 		api_params.push(label);
 		
-		params[label] = value;
+		if (json_params.includes(label)) params[label] = JSON.parse(value);
+		else params[label] = value;
+		
+		//console.log(label);
+		//console.log(value);
 	}
 }
 
@@ -537,3 +560,5 @@ if (!required_params_present) return;
 
 if (api_method == "post") requestPOST(api_name,api_path,params) // create
 if (api_method == "get") requestGET(api_name,api_path,params) // retrieve
+//if (api_method == "put") requestPUT(api_name,api_path,params) // update
+//if (api_method == "delete") requestDELETE(api_name,api_path,params) // delete
