@@ -192,6 +192,126 @@ async function helpHighLevel() {
 	console.log("\nFor list of services for an API, type:\n\n melroselabs-cli <api> help\n");
 }
 
+function displayUsage(api_method,rest_name) {
+
+	if (rest_api_param_definition_name = schema["paths"][api_path][api_method]!=null)
+	{
+	
+		console.log("\""+schema["paths"][api_path][api_method]["summary"]+"\"");
+		console.log(""+schema["paths"][api_path][api_method]["description"]+"\n");
+		
+		if (schema["paths"][api_path][api_method]["parameters"]!=null) {
+		
+			console.log("Usage: melroselabs-cli "+api_name+" "+process.argv[3]+" "+rest_name+" <parameters>\n");
+			
+			console.log("Where <parameters> are:");
+				
+			var rest_api_param_definition_name = schema["paths"][api_path][api_method]["parameters"][0]["name"];
+			var rest_api_param_definition = schema["definitions"][rest_api_param_definition_name];
+			var rest_api_param_definition_required = [];
+			if (rest_api_param_definition["required"]!=null) rest_api_param_definition_required = rest_api_param_definition["required"]
+		
+			for (const [key, value] of Object.entries(rest_api_param_definition["properties"])) {
+				console.log(" "+key.padEnd(16," ") + " : " + value["description"]);
+				if (value["enum"]) {
+					let str = "                    Choices:";
+					let i = 0;
+					for(let a of value["enum"]) { if (i%8==0) str += "\n                      "; i++; str += a.padEnd(16," "); }
+					console.log(str)
+				}
+			}
+		
+			console.log("\n");
+		}
+		else {
+			console.log("Usage: melroselabs-cli "+api_name+" "+process.argv[3]+" "+rest_name+"\n");
+		}
+	
+	}
+
+}
+
+function displayUsage(api_method,rest_name) {
+
+	if (rest_api_param_definition_name = schema["paths"][api_path][api_method]==null) return; // method not supported for this path
+	
+	console.log("\""+schema["paths"][api_path][api_method]["summary"]+"\"");
+	console.log(""+schema["paths"][api_path][api_method]["description"]+"\n");
+
+	// display any parameters
+	
+	if (schema["paths"][api_path][api_method]["parameters"]!=null) {
+	
+		console.log("Usage: melroselabs-cli "+api_name+" "+process.argv[3]+" "+rest_name+" <parameters>\n");
+		
+		console.log("Where <parameters> are:");
+		if (schema["paths"][api_path][api_method]["parameters"].length==0) console.log("None\n");
+	
+		var rest_api_param_definition_required = []; //empty array of required parameters
+		var rest_api_param_definition_name = null;
+		var rest_api_param_definition_description = null;
+		
+		for(var i=0;i<schema["paths"][api_path][api_method]["parameters"].length;i++) {
+		
+			rest_api_param_definition_name = schema["paths"][api_path][api_method]["parameters"][i]["name"];
+			rest_api_param_definition_description = "";
+			if (schema["paths"][api_path][api_method]["parameters"][i]["description"]!=null) rest_api_param_definition_description = schema["paths"][api_path][api_method]["parameters"][i]["description"];
+			//console.log(rest_api_param_definition_name)
+			
+			if (schema["paths"][api_path][api_method]["parameters"][i]["schema"]) {
+			
+				// get required status from "definition" section
+			
+				var rest_api_param_definition = schema["definitions"][rest_api_param_definition_name];
+				//console.log(rest_api_param_definition)
+				
+				if (rest_api_param_definition) {
+					if (rest_api_param_definition["required"] != null) {
+						rest_api_param_definition_required = rest_api_param_definition_required.concat( rest_api_param_definition["required"] );
+					}
+					
+					if (rest_api_param_definition["properties"]) {
+						for (const [key, value] of Object.entries(rest_api_param_definition["properties"])) {
+						
+							var isrequired = rest_api_param_definition_required.includes(key);
+							console.log((isrequired?"*":" ")+" "+key.padEnd(16," ") + " : " + value["description"]);
+							if (value["enum"]) {
+								let str = "                    Choices:";
+								let i = 0;
+								for(let a of value["enum"]) { if (i%8==0) str += "\n                      "; i++; str += a.padEnd(16," "); }
+								console.log(str)
+							}
+						}
+						
+						console.log("\n");
+					}
+					else {
+						console.log("None\n");
+					}
+					
+				}
+			
+			}
+			else {
+				var isrequired = false;
+				if (schema["paths"][api_path][api_method]["parameters"][i]["required"] === true) isrequired = true;
+				
+				console.log((isrequired?"*":" ")+" "+rest_api_param_definition_name.padEnd(16," ") + " : " + rest_api_param_definition_description);
+				console.log("\n");
+				
+				if (isrequired) {
+					rest_api_param_definition_required.push(rest_api_param_definition_name);
+				}
+			}
+		
+		}
+	}
+	else {
+		console.log("Usage: melroselabs-cli "+api_name+" "+process.argv[3]+" "+rest_name+"\n");
+	}
+
+}
+
 // help - high level
 
 if ((process.argv.length<3)||((process.argv.length==3)&&((process.argv[2] == "help")||(process.argv[2] == "--help")||(process.argv[2] == "-h")))) {
@@ -293,61 +413,10 @@ if (((process.argv.length==5)&&(process.argv[4] == "help"))||(process.argv.lengt
 	
 	//
 	
-	api_method = "";
-	
-	// create
-	
-	api_method = "post";
-	
-	if (rest_api_param_definition_name = schema["paths"][api_path][api_method]!=null)
-	{
-
-		console.log("Usage: melroselabs-cli "+api_name+" "+process.argv[3]+" create <parameters>\n");
-		
-		console.log("Where <parameters> are:");
-		
-		var rest_api_param_definition_name = schema["paths"][api_path][api_method]["parameters"][0]["name"];
-		var rest_api_param_definition = schema["definitions"][rest_api_param_definition_name];
-		var rest_api_param_definition_required = rest_api_param_definition["required"]
-	
-		for (const [key, value] of Object.entries(rest_api_param_definition["properties"])) {
-			console.log(" "+key.padEnd(16," ") + " : " + value["description"]);
-			if (value["enum"]) {
-				let str = "                    Choices:";
-				let i = 0;
-				for(let a of value["enum"]) { if (i%8==0) str += "\n                      "; i++; str += a.padEnd(16," "); }
-				console.log(str)
-			}
-		}
-	
-	}
-	
-	// get
-
-	api_method = "get";
-	
-	if (rest_api_param_definition_name = schema["paths"][api_path][api_method]!=null)
-	{
-	
-		console.log("Usage: melroselabs-cli "+api_name+" "+process.argv[3]+" create <parameters>\n");
-		
-		console.log("Where <parameters> are:");
-		
-		var rest_api_param_definition_name = schema["paths"][api_path][api_method]["parameters"][0]["name"];
-		var rest_api_param_definition = schema["definitions"][rest_api_param_definition_name];
-		var rest_api_param_definition_required = rest_api_param_definition["required"]
-	
-		for (const [key, value] of Object.entries(rest_api_param_definition["properties"])) {
-			console.log(" "+key.padEnd(16," ") + " : " + value["description"]);
-			if (value["enum"]) {
-				let str = "                    Choices:";
-				let i = 0;
-				for(let a of value["enum"]) { if (i%8==0) str += "\n                      "; i++; str += a.padEnd(16," "); }
-				console.log(str)
-			}
-		}
-	
-	}
+	displayUsage("post","create");
+	displayUsage("get","retrieve");
+	displayUsage("put","update");
+	displayUsage("delete","delete");
 	
 	//
 	
@@ -396,6 +465,7 @@ if (schema["paths"][api_path] == null) {
 var api_method = process.argv[4] // post, get, put (might change to create, etc)
 if (api_method == "create") api_method = "post";
 if (api_method == "update") api_method = "put";
+if (api_method == "retrieve") api_method = "get";
 //console.log(api_method)
 if (schema["paths"][api_path][api_method] == null) {
 	console.log("Unknown method: "+process.argv[4]);
@@ -404,28 +474,30 @@ if (schema["paths"][api_path][api_method] == null) {
 
 var rest_api_param_definition_required = []; //empty array of required parameters
 
-var rest_api_param_definition_name = null;
-for(var i=0;i<schema["paths"][api_path][api_method]["parameters"].length;i++) {
-
-	rest_api_param_definition_name = schema["paths"][api_path][api_method]["parameters"][i]["name"];
-	//console.log(rest_api_param_definition_name)
+if (schema["paths"][api_path][api_method]["parameters"]!=null) {
+	var rest_api_param_definition_name = null;
+	for(var i=0;i<schema["paths"][api_path][api_method]["parameters"].length;i++) {
 	
-	if (schema["paths"][api_path][api_method]["parameters"][i]["schema"]) {
-	
-		// get required status from "definition" section
-	
-		var rest_api_param_definition = schema["definitions"][rest_api_param_definition_name];
-		//console.log(rest_api_param_definition)
+		rest_api_param_definition_name = schema["paths"][api_path][api_method]["parameters"][i]["name"];
+		//console.log(rest_api_param_definition_name)
 		
-		if (rest_api_param_definition) {
-			if (rest_api_param_definition["required"] != null) rest_api_param_definition_required = rest_api_param_definition_required.concat( rest_api_param_definition["required"] );
+		if (schema["paths"][api_path][api_method]["parameters"][i]["schema"]) {
+		
+			// get required status from "definition" section
+		
+			var rest_api_param_definition = schema["definitions"][rest_api_param_definition_name];
+			//console.log(rest_api_param_definition)
+			
+			if (rest_api_param_definition) {
+				if (rest_api_param_definition["required"] != null) rest_api_param_definition_required = rest_api_param_definition_required.concat( rest_api_param_definition["required"] );
+			}
+		
+		}
+		else if (schema["paths"][api_path][api_method]["parameters"][i]["required"] === true) {
+			rest_api_param_definition_required.push(rest_api_param_definition_name);
 		}
 	
 	}
-	else if (schema["paths"][api_path][api_method]["parameters"][i]["required"] === true) {
-		rest_api_param_definition_required.push(rest_api_param_definition_name);
-	}
-
 }
 
 //console.log("Required parameters:");
@@ -463,5 +535,5 @@ if (!required_params_present) return;
 
 //
 
-if (api_method == "post") requestPOST(api_name,api_path,params)
-if (api_method == "get") requestGET(api_name,api_path,params)
+if (api_method == "post") requestPOST(api_name,api_path,params) // create
+if (api_method == "get") requestGET(api_name,api_path,params) // retrieve
