@@ -84,3 +84,28 @@ Send SMS
 $ melroselabs-cli restsmpp sms create 'smpp_account_config:{"host":"smscsim.melroselabs.com","port":2775,"system_id":"168547","password":"5a67e0"}' 'message:{"source_addr":"447700123123","short_message":{"text":"Hello world!"}}' 'destinations:["447700888888"]'
 {"transactionID": "65ed0d79-c896-4dba-ac91-2620bbdf234d", "messageID": ["3d232fbeab56d2c85035e22004dfa90f17c0"]}
 ```
+## Identity
+
+Note: Calls to Identity API must use an API key from https://melroselabs.com/services/one-time-password/
+
+Create authentication domain
+
+```bash
+$ melroselabs-cli identity otp/user create domain:fd4cb8bf-2be0-48a5-b189-8416cb605ca7 user_id:mdh150599
+{"domain": "fd4cb8bf-2be0-48a5-b189-8416cb605ca7", "user_id": "mdh150599", "secret": null, "type": "totp", "interval": 30}
+```
+
+Create TOTP user
+
+```bash
+$ melroselabs-cli identity otp/user create domain:fd4cb8bf-2be0-48a5-b189-8416cb605ca7 user_id:mdh150599 return_secret:true
+{"domain": "fd4cb8bf-2be0-48a5-b189-8416cb605ca7", "user_id": "mdh150599", "secret": "BSG2QDVDRAJWFWLZ", "type": "totp", "interval": 30}
+```
+
+Verify TOTP code
+
+```bash
+$ melroselabs-cli identity otp/totp create domain:fd4cb8bf-2be0-48a5-b189-8416cb605ca7 user_id:mdh150599 code:673323
+{"verified": true}
+
+```
