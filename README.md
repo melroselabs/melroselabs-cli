@@ -25,19 +25,29 @@ $ melroselabs-cli help
 Usage: melroselabs-cli <api> <service> ...
 
 Where <api> can be:
- voice
  sms
+ voice
  richmessaging
  iridium
+ restsmpp
  compression
  location
  notification
- restsmpp
  identity
 
 For list of services for an API, type:
 
  melroselabs-cli <api> help
+
+
+To set API key and update API definitions, type:
+
+ melroselabs-cli setup <api-key>
+
+
+To update API definitions, type:
+
+ melroselabs-cli update
 
 ```
 
@@ -74,6 +84,15 @@ Find Iridium satellites currently serving location
 ```bash
 $ melroselabs-cli iridium satellites/visible/{location} retrieve location:55.598,-2.731
 {"satellites": [{"name": "IRIDIUM 103", "signal": 0.123}, {"name": "IRIDIUM 166", "signal": 0.545}]}
+```
+
+## Location
+
+Basic telephone number information
+
+```bash
+$ melroselabs-cli location telno/{telephoneno} get telephoneno:447944000000
+{{"subject": "447944000000", "number": {"country": 44, "ndc": 4479446, "subscriber": ""}, "geo": {"country_name": "United Kingdom", "country_code": "GB", "continent": "", "continent_code": ""}, "network": {"name": "EE T-Mobile UK", "mccmnc": ["2342", "23430", "23431", "23432"]}}
 ```
 
 ## REST-SMPP
